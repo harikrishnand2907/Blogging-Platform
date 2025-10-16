@@ -1,0 +1,37 @@
+<div class="container mt-5" style="max-width: 450px;">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4 fw-bold">Reset Your Password</h2>
+      <p class="text-center text-muted mb-4">Enter a new password below to update your account.</p>
+
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="mb-3">
+          <%= f.label :password, "New Password", class: "form-label fw-semibold" %>
+          <% if @minimum_password_length %>
+            <small class="text-muted d-block">(<%= @minimum_password_length %> characters minimum)</small>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control shadow-sm" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :password_confirmation, class: "form-label fw-semibold" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control shadow-sm" %>
+        </div>
+
+        <div class="d-grid">
+          <%= f.submit "Update Password", class: "btn btn-success btn-lg rounded-3" %>
+        </div>
+      <% end %>
+
+      <hr class="my-4">
+
+      <div class="text-center">
+        <%= link_to "Back to Log In", new_session_path(resource_name), class: "text-decoration-none" %>
+      </div>
+    </div>
+  </div>
+</div>

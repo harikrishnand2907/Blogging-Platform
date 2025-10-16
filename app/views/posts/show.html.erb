@@ -1,20 +1,31 @@
-<div class="container mt-4">
-  <h1 class="mb-3"><%= @post.title %></h1>
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 900px;">
+    <div class="card-body p-5">
+      <h1 class="card-title fw-bold mb-3 text-center text-primary">
+        <%= @post.title %>
+      </h1>
+      <hr class="mb-4">
 
-  <% if notice %>
-    <p class="text-success"><%= notice %></p>
-  <% end %>
+      <div class="card-text fs-5 text-secondary mb-4" style="line-height: 1.8;">
+        <%= simple_format(@post.content) %>
+      </div>
 
-  <p class="lead"><%= @post.content %></p>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <p class="mb-0 text-muted fst-italic">
+          Posted by <strong><%= @post.user.email %></strong>
+        </p>
 
-  <% if user_signed_in? %>
-    <%= link_to "Download as PDF", download_pdf_post_path(@post), class: "btn btn-primary mb-2" %>
+        <p class="mb-0 text-muted">
+          <%= @post.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+        </p>
+      </div>
 
-    <% if @post.user == current_user %>
-      <%= link_to "Edit this post", edit_post_path(@post), class: "btn btn-warning mb-2" %>
-      <%= button_to "Destroy this post", @post, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger mb-2" %>
-    <% end %>
-  <% end %>
+      <hr class="my-4">
 
-  <%= link_to "Back to Posts", posts_path, class: "btn btn-secondary mt-3" %>
+      <div class="d-flex justify-content-center gap-3">
+        <%= link_to "Edit Post", edit_post_path(@post), class: "btn btn-outline-primary px-4" if @post.user == current_user %>
+        <%= link_to "Back to Blog", posts_path, class: "btn btn-secondary px-4" %>
+      </div>
+    </div>
+  </div>
 </div>

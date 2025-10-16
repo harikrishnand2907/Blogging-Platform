@@ -1,0 +1,48 @@
+<div class="container mt-5" style="max-width: 450px;">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4 fw-bold">Welcome Back</h2>
+
+      <% if alert.present? %>
+        <div class="alert alert-danger rounded-3 shadow-sm text-center">
+          <%= alert %>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="mb-3">
+          <%= f.label :email, class: "form-label fw-semibold" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control shadow-sm" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :password, class: "form-label fw-semibold" %>
+          <%= f.password_field :password, autocomplete: "current-password", class: "form-control shadow-sm" %>
+        </div>
+
+        <%# Forgot Password Link %>
+        <div class="mb-3 text-end">
+          <%= link_to "Forgot your password?", new_user_password_path, class: "text-decoration-none small" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="form-check mb-3">
+            <%= f.check_box :remember_me, class: "form-check-input" %>
+            <%= f.label :remember_me, class: "form-check-label fw-semibold" %>
+          </div>
+        <% end %>
+
+        <div class="d-grid mb-3">
+          <%= f.submit "Log In", class: "btn btn-primary btn-lg rounded-3" %>
+        </div>
+      <% end %>
+
+      <hr class="my-4">
+
+      <div class="text-center">
+        <p class="text-muted mb-2">Don’t have an account?</p>
+        <%= link_to "Create Account", new_user_registration_path, class: "btn btn-success btn-lg rounded-3 w-100" %>
+      </div>
+    </div>
+  </div>
+</div>
