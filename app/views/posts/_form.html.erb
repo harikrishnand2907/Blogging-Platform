@@ -1,26 +1,81 @@
-<div class="container mt-4">
-  <%= form_with(model: post, local: true) do |form| %>
-    <% if post.errors.any? %>
-      <div class="alert alert-danger">
-        <h4><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h4>
-        <ul>
-          <% post.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-          <% end %>
-        </ul>
-      </div>
+<%= form_with(model: post, local: true, html: { multipart: true, class: "bg-white p-4 rounded-3 shadow-sm" }) do |form| %>
+  <% if post.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h4>
+      <ul>
+        <% post.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label fw-semibold" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :content, class: "form-label fw-semibold" %>
+    <%= form.text_area :content, class: "form-control", rows: 5 %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :image, "Upload Image", class: "form-label fw-semibold" %>
+    <%= form.file_field :image, accept: "image/*", class: "form-control", id: "post_image" %>
+
+    <% if post.image.attached? %>
+      <p class="mt-2 fw-semibold">Current Image:</p>
+      <%= image_tag post.image, id: "current_image", style: "max-width:200px; border-radius:10px; margin-bottom:10px;" %>
     <% end %>
 
-    <div class="mb-3">
-      <%= form.label :title, class: "form-label" %>
-      <%= form.text_field :title, class: "form-control" %>
-    </div>
+    <p class="mt-2 fw-semibold">Preview New Image:</p>
+    <img id="image_preview" src="#" alt="Preview" style="display:none; max-width:200px; border-radius:10px;">
+  </div>
 
-    <div class="mb-3">
-      <%= form.label :content, class: "form-label" %>
-      <%= form.text_area :content, class: "form-control", rows: 5 %>
-    </div>
+  <div class="text-center">
+    <%= form.submit class: "btn btn-success fw-bold px-4" %>
+    <%= link_to "Back", posts_path, class: "btn btn-primary fw-bold px-4 ms-2" %>
+  </div>
+<% end %>
 
-    <%= form.submit class: "btn btn-success" %>
-  <% end %>
-</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const input = document.getElementById("post_image");
+    const preview = document.getElementById("image_preview");
+
+    input.addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+      }
+    });
+  });
+</script>
+
+<style>
+  .btn-success {
+    background-color: #04AA6D;
+    color: white;
+  }
+  .btn-success:hover {
+    background-color: #039f5c;
+    color: white;
+  }
+
+  .btn-primary {
+    background-color: #2196F3;
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: #0b7dda;
+    color: white;
+  }
+
+  body {
+    background-color: #f1f1f1;
+  }
+</style>

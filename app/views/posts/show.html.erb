@@ -1,9 +1,15 @@
-<div class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 900px;">
+<div class="container py-5" style="background-color: #f1f1f1; min-height: 100vh;">
+  <div class="card shadow-lg border-0 rounded-4 mx-auto overflow-hidden" style="max-width: 900px; background-color: #ffffff;">
+    
+    <% if @post.image.attached? %>
+      <%= image_tag @post.image, class: "w-100", style: "max-height: 450px; object-fit: cover;" %>
+    <% end %>
+
     <div class="card-body p-5">
       <h1 class="card-title fw-bold mb-3 text-center text-primary">
         <%= @post.title %>
       </h1>
+
       <hr class="mb-4">
 
       <div class="card-text fs-5 text-secondary mb-4" style="line-height: 1.8;">
@@ -23,9 +29,55 @@
       <hr class="my-4">
 
       <div class="d-flex justify-content-center gap-3">
-        <%= link_to "Edit Post", edit_post_path(@post), class: "btn btn-outline-primary px-4" if @post.user == current_user %>
-        <%= link_to "Back to Blog", posts_path, class: "btn btn-secondary px-4" %>
+        <% if @post.user == current_user %>
+          <%= link_to "Edit Post", edit_post_path(@post), class: "btn btn-success px-4 fw-semibold" %>
+        <% end %>
+        <%= link_to "Back to Blog", posts_path, class: "btn btn-primary px-4 fw-semibold" %>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  body {
+    background-color: #f1f1f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .card {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+  }
+
+  .card-text {
+    color: #555;
+  }
+
+  .btn-success {
+    background-color: #04AA6D;
+    color: white;
+  }
+
+  .btn-success:hover {
+    background-color: #039f5c;
+    color: white;
+  }
+
+  .btn-primary {
+    background-color: #2196F3;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #0b7dda;
+    color: white;
+  }
+
+  hr {
+    border-top: 1px solid #dee2e6;
+  }
+</style>

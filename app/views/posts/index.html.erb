@@ -1,35 +1,79 @@
-<div class="container mt-4">
-  <h1 class="mb-4">All Posts</h1>
-
-  <% if notice %>
-    <p class="text-success"><%= notice %></p>
-  <% end %>
+<div class="d-flex" style="height: calc(100vh - 20px);">
 
   <% if user_signed_in? %>
-    <div class="mb-3">
-      <%= form_with url: import_posts_path, multipart: true, local: true, class: "d-flex gap-2" do |f| %>
-        <%= f.file_field :file, class: "form-control" %>
-        <%= f.submit "Import CSV", class: "btn btn-primary" %>
+    <div class="sidebar d-flex flex-column bg-light p-3" style="width: 250px; flex-shrink: 0; border-right: 1px solid #dee2e6;">
+      <div class="mb-3">
+        <%= link_to "Create New Post", new_post_path, class: "btn btn-success w-100" %>
+      </div>
+
+      <%= form_with url: import_posts_path, multipart: true, local: true, class: "mb-3" do |f| %>
+        <div class="input-group">
+          <%= f.file_field :file, class: "form-control" %>
+          <button class="btn btn-success" type="submit">Import CSV</button>
+        </div>
       <% end %>
+
+      <h5 class="mt-3">Your Posts</h5>
+      <ul class="nav flex-column mt-2">
+        <% current_user.posts.each do |post| %>
+          <li class="nav-item mb-1">
+            <%= link_to truncate(post.title, length: 25), post_path(post), class: "nav-link text-dark" %>
+          </li>
+        <% end %>
+      </ul>
     </div>
-    <%= link_to "New Post", new_post_path, class: "btn btn-success mb-3" %>
   <% end %>
 
-  <div class="row">
-    <% @posts.each do |post| %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><%= link_to post.title, post %></h5>
-            <p class="card-text"><%= truncate(post.content, length: 100) %></p>
+  <div class="container mt-4">
+    <h2 class="mb-4 text-center">All Blogs</h2>
 
-            <% if user_signed_in? && post.user == current_user %>
-              <%= link_to "Edit", edit_post_path(post), class: "btn btn-warning btn-sm" %>
-              <%= button_to "Delete", post, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <% @posts.each do |post| %>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0"
+               style="background-color: #ffffff; border-radius: 12px; transition: all 0.3s ease;">
+            
+            <% if post.image.attached? %>
+              <%= image_tag post.image, class: "card-img-top", style: "max-height:200px; object-fit:cover; border-top-left-radius:12px; border-top-right-radius:12px;" %>
             <% end %>
+
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-primary"><%= post.title %></h5>
+              <p class="card-text text-muted flex-grow-1"><%= truncate(post.content, length: 120) %></p>
+
+              <div class="mt-auto d-flex justify-content-start flex-wrap gap-2">
+                <%= link_to 'Show', post_path(post), class: 'btn btn-sm btn-info' %>
+                <%= link_to 'Download', download_pdf_post_path(post), class: 'btn btn-sm btn-success' %>
+
+                <% if user_signed_in? && post.user == current_user %>
+                  <%= link_to 'Edit', edit_post_path(post), class: 'btn btn-sm btn-warning' %>
+                  <%= link_to 'Delete', post, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="card-footer bg-light border-0">
+              <small class="text-secondary">Posted by <%= post.user.email %></small>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 </div>
+
+<style>
+  .btn-success { background-color: #04AA6D; color: white; }
+  .btn-warning { background-color: #ff9800; color: white; }
+  .btn-danger { background-color: #f44336; color: white; }
+  .btn-info { background-color: #2196F3; color: white; }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  }
+
+  body { background-color: #f1f1f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .container h2 { color: #04AA6D; font-weight: 600; }
+</style>

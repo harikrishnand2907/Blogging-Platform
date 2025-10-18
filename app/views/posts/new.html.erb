@@ -1,9 +1,54 @@
-<h1>New post</h1>
+<div class="container mt-5 p-4 rounded-4 shadow-lg" style="background-color: #f1f1f1;">
+  <h2 class="mb-4 text-center fw-bold text-primary">Create a New Post</h2>
 
-<%= render "form", post: @post %>
+  <%= form_with(model: @post, local: true, html: { multipart: true, class: "bg-white p-4 rounded-3 shadow-sm" }) do |form| %>
+    <% if @post.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h4>
+        <ul>
+          <% @post.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-<br>
+    <div class="mb-3">
+      <%= form.label :title, class: "form-label fw-semibold" %>
+      <%= form.text_field :title, class: "form-control" %>
+    </div>
 
-<div>
-  <%= link_to "Back to posts", posts_path %>
+    <div class="mb-3">
+      <%= form.label :content, class: "form-label fw-semibold" %>
+      <%= form.text_area :content, class: "form-control", rows: 5 %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :image, "Upload Image", class: "form-label fw-semibold" %>
+      <%= form.file_field :image, accept: "image/*", class: "form-control", id: "post_image" %>
+      <img id="image_preview" src="#" alt="Preview" style="display:none; max-width:200px; margin-top:10px; border-radius:10px;">
+    </div>
+
+    <div class="text-center">
+      <%= form.submit "Create Post", class: "btn btn-primary fw-bold px-4" %>
+      <%= link_to "Back to Posts", posts_path, class: "btn btn-secondary fw-bold px-4" %>
+    </div>
+  <% end %>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const input = document.getElementById("post_image");
+    const preview = document.getElementById("image_preview");
+
+    input.addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+      }
+    });
+  });
+</script>

@@ -6,9 +6,10 @@ class PostsController < ApplicationController
   require 'csv'
   require 'prawn'
 
-  def index
-    @posts = Post.all
-  end
+def index
+  @posts = Post.includes(:user, image_attachment: :blob).all
+end
+
 
   def new
     @post = current_user.posts.build
@@ -31,10 +32,15 @@ class PostsController < ApplicationController
     end
   end
 
-  def destroy
+ def destroy
+  @post = Post.find(params[:id])
+  if @post.user == current_user
     @post.destroy
-    redirect_to posts_path, notice: 'Post was successfully deleted.'
+    redirect_to posts_path, notice: "Post deleted successfully."
+  else
+    redirect_to posts_path, alert: "You are not authorized."
   end
+end
 
   def import
     if params[:file].present?
@@ -47,13 +53,34 @@ class PostsController < ApplicationController
     end
   end
 
-  def download_pdf
-    pdf = Prawn::Document.new
-    pdf.text @post.title, size: 24, style: :bold
-    pdf.move_down 10
-    pdf.text @post.content
-    send_data pdf.render, filename: "#{@post.title}.pdf", type: 'application/pdf', disposition: 'attachment'
+ def download_pdf
+  pdf = Prawn::Document.new(page_size: 'A4')
+
+  
+  pdf.text @post.title, size: 22, style: :bold, align: :center
+  pdf.move_down 20
+
+ 
+  if @post.image.attached?
+    image_path = ActiveStorage::Blob.service.send(:path_for, @post.image.key)
+    pdf.image image_path, fit: [500, 300], position: :center
+    pdf.move_down 20
   end
+
+  
+  pdf.text @post.content.to_s, size: 12, leading: 5, align: :justify
+  pdf.move_down 30
+
+ 
+  pdf.text "Posted by: #{@post.user.email}", size: 10, align: :left, style: :italic
+  pdf.text "Generated on: #{Time.zone.now.strftime('%d %B %Y, %I:%M %p')}", size: 10, align: :right, style: :italic
+
+  send_data pdf.render,
+            filename: "#{@post.title.parameterize}.pdf",
+            type: 'application/pdf',
+            disposition: 'attachment'
+end
+
 
   private
 
@@ -66,6 +93,6 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:title, :content)
+    params.require(:post).permit(:title, :content, :image)
   end
 end

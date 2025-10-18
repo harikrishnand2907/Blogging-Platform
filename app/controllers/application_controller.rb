@@ -11,15 +11,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
+    def after_sign_out_path_for(resource_or_scope)
+    posts_path
+  end
+
   def after_sign_in_path_for(resource)
-    posts_path # Redirect to blog page after login
+    posts_path 
   end
 
   def after_sign_up_path_for(resource)
-    posts_path # Redirect to blog page after signup
+    posts_path 
   end
 
-  def after_sign_out_path_for(resource_or_scope)
-    new_user_session_path # Redirect to login page after logout
-  end
 end
